@@ -25,6 +25,7 @@ export interface AnalysisHistory {
   fileType: 'image' | 'video';
   thumbnail: string;
   score: number;
+  analyzed: boolean;
 }
 
 // Mock analysis function
@@ -127,6 +128,57 @@ export const analyzeMockCreative = (file: File): Promise<AnalysisResult> => {
   });
 };
 
+// Improve creative with AI (mock function)
+export const improveCreativeWithAI = (result: AnalysisResult): Promise<AnalysisResult> => {
+  return new Promise((resolve) => {
+    // Simulate AI processing time
+    setTimeout(() => {
+      // Create improved version
+      const improvedResult = { ...result };
+      
+      // Improve score
+      improvedResult.score = Math.min(100, result.score + result.improvementPotential);
+      
+      // Remove weaknesses that were addressed
+      improvedResult.weaknesses = result.weaknesses.slice(0, 1);
+      
+      // Add new strengths
+      improvedResult.strengths = [
+        ...result.strengths,
+        "Melhorado com IA para performance ideal",
+        "Elementos visuais balanceados"
+      ];
+      
+      // Reduce suggestions
+      improvedResult.suggestions = result.suggestions.slice(0, 1);
+      
+      // Improve elements
+      improvedResult.elements = {
+        ...result.elements,
+        hasCTA: true,
+        colorBalance: "Ótimo",
+        emotionalImpact: "Alto"
+      };
+      
+      // Reduced improvement potential
+      improvedResult.improvementPotential = Math.max(5, result.improvementPotential - 15);
+      
+      resolve(improvedResult);
+    }, 3000);
+  });
+};
+
+// Download report as PDF (mock function)
+export const downloadReportAsPDF = (result: AnalysisResult): Promise<boolean> => {
+  return new Promise((resolve) => {
+    // Simulate download time
+    setTimeout(() => {
+      console.log("Downloading report for creative with score:", result.score);
+      resolve(true);
+    }, 1500);
+  });
+};
+
 // Mock history data with more realistic entries
 export const getMockHistoryItems = (): AnalysisHistory[] => {
   return [
@@ -135,48 +187,54 @@ export const getMockHistoryItems = (): AnalysisHistory[] => {
       date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
       fileName: 'banner-curso-maio-2024.jpg',
       fileType: 'image',
-      thumbnail: 'https://via.placeholder.com/100x100',
-      score: 72
+      thumbnail: 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      score: 72,
+      analyzed: true
     },
     {
       id: '2',
       date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
       fileName: 'anuncio-lancamento-mentoria.mp4',
       fileType: 'video',
-      thumbnail: 'https://via.placeholder.com/100x100',
-      score: 64
+      thumbnail: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      score: 64,
+      analyzed: true
     },
     {
       id: '3',
       date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
       fileName: 'promocao-black-friday.jpg',
       fileType: 'image',
-      thumbnail: 'https://via.placeholder.com/100x100',
-      score: 81
+      thumbnail: 'https://images.unsplash.com/photo-1611605698335-8b1569810432?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      score: 81,
+      analyzed: true
     },
     {
       id: '4',
       date: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000), // 10 days ago
       fileName: 'depoimento-cliente-sucesso.jpg',
       fileType: 'image',
-      thumbnail: 'https://via.placeholder.com/100x100',
-      score: 88
+      thumbnail: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      score: 88,
+      analyzed: true
     },
     {
       id: '5',
       date: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000), // 14 days ago
       fileName: 'video-explicativo-produto.mp4',
       fileType: 'video',
-      thumbnail: 'https://via.placeholder.com/100x100',
-      score: 59
+      thumbnail: 'https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      score: 59,
+      analyzed: false
     },
     {
       id: '6',
       date: new Date(Date.now() - 18 * 24 * 60 * 60 * 1000), // 18 days ago
       fileName: 'campanha-leads-webinar.jpg',
       fileType: 'image',
-      thumbnail: 'https://via.placeholder.com/100x100',
-      score: 76
+      thumbnail: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      score: 76,
+      analyzed: false
     }
   ];
 };

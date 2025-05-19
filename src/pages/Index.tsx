@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import Hero from '@/components/Hero';
@@ -6,6 +5,7 @@ import Footer from '@/components/Footer';
 import FileUploader from '@/components/FileUploader';
 import AnalysisResults from '@/components/AnalysisResults';
 import HistorySection from '@/components/HistorySection';
+import OptimizedCreativesSection from '@/components/OptimizedCreativesSection';
 import { Button } from '@/components/ui/button';
 import { analyzeMockCreative, getMockHistoryItems, AnalysisResult } from '@/lib/mockAnalysis';
 import { toast } from '@/components/ui/use-toast';
@@ -94,6 +94,8 @@ const Index = () => {
           )}
         </div>
       </section>
+      
+      <OptimizedCreativesSection />
       
       <HistorySection history={historyItems} />
       

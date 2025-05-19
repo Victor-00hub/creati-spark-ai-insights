@@ -1,13 +1,17 @@
 
 import React, { useState } from 'react';
-import { AnalysisResult, improveCreativeWithAI, downloadReportAsPDF } from '@/lib/mockAnalysis';
+import { AnalysisResult, improveCreativeWithAI, downloadReportAsPDF, getOptimizedCreative, downloadOptimizedCreative } from '@/lib/mockAnalysis';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { ArrowRight, Check, X, AlertCircle, Download, Wand2, RefreshCw, Upload } from 'lucide-react';
+import { ArrowRight, Check, X, AlertCircle, Download, Wand2, RefreshCw, Upload, Eye } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { toast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { 
+  Dialog, DialogContent, DialogDescription, DialogHeader, 
+  DialogTitle, DialogFooter 
+} from '@/components/ui/dialog';
 
 interface AnalysisResultsProps {
   result: AnalysisResult;
@@ -18,6 +22,8 @@ const AnalysisResults = ({ result: initialResult, onNewAnalysis }: AnalysisResul
   const [result, setResult] = useState<AnalysisResult>(initialResult);
   const [isImproving, setIsImproving] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [isViewingOptimized, setIsViewingOptimized] = useState(false);
+  const [isLoadingOptimized, setIsLoadingOptimized] = useState(false);
   
   // Determine score color
   const getScoreColor = (score: number) => {
@@ -84,6 +90,67 @@ const AnalysisResults = ({ result: initialResult, onNewAnalysis }: AnalysisResul
     }
   };
   
+  // Handle view optimized creative
+  const handleViewOptimized = async () => {
+    if (!result.optimizedVersion) {
+      toast({
+        title: "Criativo não otimizado",
+        description: "Por favor, otimize o criativo primeiro clicando em 'Melhorar com IA'.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setIsLoadingOptimized(true);
+    setIsViewingOptimized(true);
+    
+    try {
+      await getOptimizedCreative(result);
+    } catch (error) {
+      toast({
+        title: "Erro ao carregar criativo",
+        description: "Não foi possível carregar o criativo otimizado.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoadingOptimized(false);
+    }
+  };
+  
+  // Handle download optimized creative
+  const handleDownloadOptimized = async () => {
+    if (!result.optimizedVersion) {
+      toast({
+        title: "Criativo não otimizado",
+        description: "Por favor, otimize o criativo primeiro clicando em 'Melhorar com IA'.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setIsDownloading(true);
+    toast({
+      title: "Baixando criativo otimizado",
+      description: "Preparando seu criativo para download...",
+    });
+    
+    try {
+      await downloadOptimizedCreative(result);
+      toast({
+        title: "Download concluído!",
+        description: "Seu criativo otimizado foi baixado com sucesso.",
+      });
+    } catch (error) {
+      toast({
+        title: "Erro no download",
+        description: "Não foi possível baixar o criativo otimizado.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+  
   return (
     <div className="w-full">
       <div className="bg-white rounded-lg shadow-lg border p-6">
@@ -139,6 +206,17 @@ const AnalysisResults = ({ result: initialResult, onNewAnalysis }: AnalysisResul
                   </>
                 )}
               </Button>
+              
+              {result.optimizedVersion && (
+                <Button 
+                  variant="default" 
+                  className="w-full bg-brand-purple hover:bg-brand-purple/90"
+                  onClick={handleViewOptimized}
+                >
+                  <Eye className="mr-2 h-4 w-4" />
+                  Ver criativo otimizado
+                </Button>
+              )}
               
               <Button 
                 variant="outline" 
@@ -364,6 +442,103 @@ const AnalysisResults = ({ result: initialResult, onNewAnalysis }: AnalysisResul
           </div>
         </div>
       </div>
+      
+      {/* Optimized Creative Preview Dialog */}
+      <Dialog open={isViewingOptimized} onOpenChange={setIsViewingOptimized}>
+        <DialogContent className="sm:max-w-[800px]">
+          <DialogHeader>
+            <DialogTitle>Criativo Otimizado com IA</DialogTitle>
+            <DialogDescription>
+              Versão aprimorada do seu criativo pronta para uso
+            </DialogDescription>
+          </DialogHeader>
+          
+          {isLoadingOptimized ? (
+            <div className="py-10 text-center">
+              <RefreshCw className="w-8 h-8 animate-spin mx-auto text-brand-purple" />
+              <p className="mt-4 text-gray-500">Carregando criativo otimizado...</p>
+            </div>
+          ) : (
+            <>
+              <div className="mt-4 rounded-lg overflow-hidden border">
+                <img
+                  src={result.optimizedVersion}
+                  alt="Criativo otimizado"
+                  className="w-full h-auto object-contain max-h-[500px]"
+                />
+              </div>
+              
+              <div className="mt-6 flex flex-col gap-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-medium">Pontuação original</h4>
+                    <p className={`text-xl font-bold ${getScoreColor(initialResult.score)}`}>
+                      {initialResult.score}/100
+                    </p>
+                  </div>
+                  <div className="text-center">
+                    <ArrowRight className="w-10 h-10 text-gray-300" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium">Pontuação otimizada</h4>
+                    <p className={`text-xl font-bold ${getScoreColor(result.score)}`}>
+                      {result.score}/100
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="p-4 bg-green-50 rounded-lg">
+                  <h4 className="font-medium mb-2 text-green-700">Melhorias aplicadas:</h4>
+                  <ul className="space-y-2 text-sm text-green-700">
+                    <li className="flex items-start gap-2">
+                      <Check className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                      Contraste e legibilidade aprimorados
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Check className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                      Elementos visuais rebalanceados para maior impacto
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Check className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                      CTA otimizado para maior conversão
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Check className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                      Paleta de cores ajustada para maior engajamento
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </>
+          )}
+          
+          <DialogFooter className="gap-2 mt-4">
+            <Button 
+              variant="outline"
+              onClick={() => setIsViewingOptimized(false)}
+            >
+              Fechar
+            </Button>
+            <Button 
+              className="bg-brand-purple hover:bg-brand-purple/90"
+              onClick={handleDownloadOptimized}
+              disabled={isDownloading}
+            >
+              {isDownloading ? (
+                <>
+                  <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                  Baixando...
+                </>
+              ) : (
+                <>
+                  <Download className="mr-2 h-4 w-4" />
+                  Baixar criativo
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

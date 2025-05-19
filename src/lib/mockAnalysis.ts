@@ -1,4 +1,3 @@
-
 // Types
 export interface AnalysisResult {
   score: number;
@@ -16,6 +15,7 @@ export interface AnalysisResult {
   };
   recommendedFormats: string[];
   improvementPotential: number;
+  optimizedVersion?: string; // URL para a versão otimizada
 }
 
 export interface AnalysisHistory {
@@ -26,6 +26,7 @@ export interface AnalysisHistory {
   thumbnail: string;
   score: number;
   analyzed: boolean;
+  optimizedVersion?: string; // URL para a versão otimizada
 }
 
 // Mock analysis function
@@ -163,6 +164,13 @@ export const improveCreativeWithAI = (result: AnalysisResult): Promise<AnalysisR
       // Reduced improvement potential
       improvedResult.improvementPotential = Math.max(5, result.improvementPotential - 15);
       
+      // Add optimized version URL (mock image)
+      if (result.fileType === 'image') {
+        improvedResult.optimizedVersion = 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3';
+      } else {
+        improvedResult.optimizedVersion = 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3';
+      }
+      
       resolve(improvedResult);
     }, 3000);
   });
@@ -179,6 +187,28 @@ export const downloadReportAsPDF = (result: AnalysisResult): Promise<boolean> =>
   });
 };
 
+// Get optimized creative (mock function)
+export const getOptimizedCreative = (result: AnalysisResult): Promise<string> => {
+  return new Promise((resolve) => {
+    // Simulate download time
+    setTimeout(() => {
+      // Return the optimized version URL
+      resolve(result.optimizedVersion || 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3');
+    }, 1000);
+  });
+};
+
+// Download optimized creative (mock function)
+export const downloadOptimizedCreative = (result: AnalysisResult): Promise<boolean> => {
+  return new Promise((resolve) => {
+    // Simulate download time
+    setTimeout(() => {
+      console.log("Downloading optimized creative:", result.optimizedVersion);
+      resolve(true);
+    }, 1500);
+  });
+};
+
 // Mock history data with more realistic entries
 export const getMockHistoryItems = (): AnalysisHistory[] => {
   return [
@@ -189,7 +219,8 @@ export const getMockHistoryItems = (): AnalysisHistory[] => {
       fileType: 'image',
       thumbnail: 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       score: 72,
-      analyzed: true
+      analyzed: true,
+      optimizedVersion: 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3'
     },
     {
       id: '2',
@@ -198,7 +229,8 @@ export const getMockHistoryItems = (): AnalysisHistory[] => {
       fileType: 'video',
       thumbnail: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       score: 64,
-      analyzed: true
+      analyzed: true,
+      optimizedVersion: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3'
     },
     {
       id: '3',
@@ -207,7 +239,8 @@ export const getMockHistoryItems = (): AnalysisHistory[] => {
       fileType: 'image',
       thumbnail: 'https://images.unsplash.com/photo-1611605698335-8b1569810432?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       score: 81,
-      analyzed: true
+      analyzed: true,
+      optimizedVersion: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3'
     },
     {
       id: '4',
@@ -216,7 +249,8 @@ export const getMockHistoryItems = (): AnalysisHistory[] => {
       fileType: 'image',
       thumbnail: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       score: 88,
-      analyzed: true
+      analyzed: true,
+      optimizedVersion: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3'
     },
     {
       id: '5',
@@ -225,7 +259,8 @@ export const getMockHistoryItems = (): AnalysisHistory[] => {
       fileType: 'video',
       thumbnail: 'https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       score: 59,
-      analyzed: false
+      analyzed: false,
+      optimizedVersion: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3'
     },
     {
       id: '6',
@@ -234,7 +269,21 @@ export const getMockHistoryItems = (): AnalysisHistory[] => {
       fileType: 'image',
       thumbnail: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       score: 76,
-      analyzed: false
+      analyzed: false,
+      optimizedVersion: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3'
     }
   ];
+};
+
+// Get optimized creatives (mock function)
+export const getOptimizedCreatives = (): Promise<AnalysisHistory[]> => {
+  return new Promise((resolve) => {
+    // Simulate API call
+    setTimeout(() => {
+      const history = getMockHistoryItems();
+      // Filter to only include items with optimized versions
+      const optimized = history.filter(item => item.optimizedVersion);
+      resolve(optimized);
+    }, 1000);
+  });
 };

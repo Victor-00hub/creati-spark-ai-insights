@@ -5,7 +5,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { 
   Image, Video, Calendar, Clock, ArrowRight, Star, 
-  Trash2, Eye, RefreshCw, Download, AlertCircle 
+  Trash2, Eye, RefreshCw, Download, AlertCircle, 
+  Check, X
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';

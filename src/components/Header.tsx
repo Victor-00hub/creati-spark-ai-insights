@@ -2,21 +2,44 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Menu, X } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Menu, X, User, LogIn } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  const handleLogin = () => {
+  const handleLogin = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    
+    // Validation check
+    if (!email || !password) {
+      toast({
+        title: "Erro no login",
+        description: "Por favor, preencha todos os campos.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Mock login - in a real app this would connect to your backend
     toast({
-      title: "Login",
-      description: "Sistema de login será implementado em breve.",
+      title: "Login bem-sucedido!",
+      description: "Bem-vindo de volta à plataforma CreatiBoost.",
     });
+    
+    setIsLoginOpen(false);
+    setEmail('');
+    setPassword('');
   };
 
   const handleTryFree = () => {
@@ -56,9 +79,10 @@ const Header = () => {
           {isMenuOpen && (
             <>
               <Button variant="outline" className="mt-6" onClick={() => {
-                handleLogin();
+                setIsLoginOpen(true);
                 setIsMenuOpen(false);
               }}>
+                <LogIn className="mr-2 h-4 w-4" />
                 Login
               </Button>
               <Button className="bg-brand-orange hover:bg-brand-orange/90 text-white" onClick={() => {
@@ -75,25 +99,14 @@ const Header = () => {
         </nav>
         
         <div className="flex items-center gap-3">
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant="outline" className="hidden md:flex hover:bg-brand-purple/5">
-                Login
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Portal de Login</AlertDialogTitle>
-                <AlertDialogDescription>
-                  O sistema de login estará disponível em breve. Entre em contato com suporte@creatiboost.com para obter acesso antecipado.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                <AlertDialogAction onClick={handleLogin}>Entendi</AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          <Button 
+            variant="outline" 
+            className="hidden md:flex hover:bg-brand-purple/5"
+            onClick={() => setIsLoginOpen(true)}
+          >
+            <User className="mr-2 h-4 w-4" />
+            Login
+          </Button>
           
           <Button 
             className="bg-gradient-to-r from-brand-purple to-brand-blue hover:opacity-90 text-white shadow-md hover:shadow-lg transition-all"
@@ -107,6 +120,67 @@ const Header = () => {
           </Button>
         </div>
       </div>
+      
+      {/* Login Dialog */}
+      <Dialog open={isLoginOpen} onOpenChange={setIsLoginOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold">Login</DialogTitle>
+            <DialogDescription>
+              Acesse sua conta para visualizar análises salvas e recursos premium.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <form onSubmit={handleLogin} className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input 
+                id="email" 
+                type="email" 
+                placeholder="seuemail@exemplo.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">Senha</Label>
+                <Button type="button" variant="link" className="p-0 h-auto text-xs">
+                  Esqueceu a senha?
+                </Button>
+              </div>
+              <Input 
+                id="password" 
+                type="password" 
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            
+            <DialogFooter className="pt-4">
+              <Button type="button" variant="outline" onClick={() => setIsLoginOpen(false)}>
+                Cancelar
+              </Button>
+              <Button type="submit">Entrar</Button>
+            </DialogFooter>
+          </form>
+          
+          <div className="border-t pt-4 text-center">
+            <p className="text-sm text-gray-500">Ainda não tem uma conta?</p>
+            <Button 
+              variant="link" 
+              onClick={() => {
+                setIsLoginOpen(false);
+                handleTryFree();
+              }}
+              className="mt-1"
+            >
+              Criar conta grátis
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </header>
   );
 };

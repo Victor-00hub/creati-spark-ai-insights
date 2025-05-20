@@ -1,7 +1,20 @@
 
-import React from 'react';
+import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogDescription, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogFooter 
+} from '@/components/ui/dialog';
+import { Book, Layers, Download, Info } from 'lucide-react';
 
 const Footer = () => {
+  const [howItWorksOpen, setHowItWorksOpen] = useState(false);
+  const [resourcesOpen, setResourcesOpen] = useState(false);
+
   return (
     <footer className="bg-gray-50 border-t">
       <div className="container max-w-7xl mx-auto py-12 px-4">
@@ -18,9 +31,23 @@ const Footer = () => {
           <div>
             <h3 className="font-medium mb-4">Produto</h3>
             <ul className="space-y-3 text-sm text-gray-600">
-              <li><a href="#" className="hover:text-brand-purple">Como funciona</a></li>
-              <li><a href="#" className="hover:text-brand-purple">Recursos</a></li>
-              <li><a href="#" className="hover:text-brand-purple">Preços</a></li>
+              <li>
+                <button 
+                  onClick={() => setHowItWorksOpen(true)} 
+                  className="hover:text-brand-purple"
+                >
+                  Como funciona
+                </button>
+              </li>
+              <li>
+                <button 
+                  onClick={() => setResourcesOpen(true)} 
+                  className="hover:text-brand-purple"
+                >
+                  Recursos
+                </button>
+              </li>
+              <li><a href="#precos" className="hover:text-brand-purple">Preços</a></li>
               <li><a href="#" className="hover:text-brand-purple">FAQ</a></li>
             </ul>
           </div>
@@ -72,6 +99,243 @@ const Footer = () => {
           </div>
         </div>
       </div>
+
+      {/* Como Funciona Dialog */}
+      <Dialog open={howItWorksOpen} onOpenChange={setHowItWorksOpen}>
+        <DialogContent className="sm:max-w-[800px]">
+          <DialogHeader>
+            <DialogTitle className="text-2xl flex items-center gap-2">
+              <Info className="text-brand-purple h-6 w-6" />
+              Como Funciona o CreatiBoost
+            </DialogTitle>
+            <DialogDescription>
+              Entenda o processo de análise e otimização de criativos
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-6 py-4">
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="flex flex-col gap-3 p-4 border rounded-lg">
+                <div className="w-12 h-12 rounded-full bg-brand-purple/10 flex items-center justify-center text-brand-purple mb-2">
+                  <span className="text-xl font-bold">1</span>
+                </div>
+                <h3 className="text-lg font-medium">Faça upload do seu criativo</h3>
+                <p className="text-gray-600 text-sm">
+                  Envie suas imagens ou vídeos diretamente na plataforma. Suportamos 
+                  formatos JPG, PNG, MP4 e MOV com até 50MB.
+                </p>
+              </div>
+              
+              <div className="flex flex-col gap-3 p-4 border rounded-lg">
+                <div className="w-12 h-12 rounded-full bg-brand-purple/10 flex items-center justify-center text-brand-purple mb-2">
+                  <span className="text-xl font-bold">2</span>
+                </div>
+                <h3 className="text-lg font-medium">IA analisa seu criativo</h3>
+                <p className="text-gray-600 text-sm">
+                  Nossa IA avalia mais de 50 elementos do seu criativo, incluindo cores, 
+                  contraste, chamadas para ação, texto e elementos visuais.
+                </p>
+              </div>
+              
+              <div className="flex flex-col gap-3 p-4 border rounded-lg">
+                <div className="w-12 h-12 rounded-full bg-brand-purple/10 flex items-center justify-center text-brand-purple mb-2">
+                  <span className="text-xl font-bold">3</span>
+                </div>
+                <h3 className="text-lg font-medium">Receba recomendações</h3>
+                <p className="text-gray-600 text-sm">
+                  Visualize pontos fortes e fracos do seu criativo, com sugestões 
+                  específicas para melhorar seu desempenho e taxa de conversão.
+                </p>
+              </div>
+              
+              <div className="flex flex-col gap-3 p-4 border rounded-lg">
+                <div className="w-12 h-12 rounded-full bg-brand-purple/10 flex items-center justify-center text-brand-purple mb-2">
+                  <span className="text-xl font-bold">4</span>
+                </div>
+                <h3 className="text-lg font-medium">Optimize com IA</h3>
+                <p className="text-gray-600 text-sm">
+                  Com um clique, nossa IA aplica as melhorias recomendadas ao seu criativo, 
+                  gerando uma nova versão otimizada pronta para uso.
+                </p>
+              </div>
+            </div>
+            
+            <div className="p-4 bg-gray-50 rounded-lg">
+              <h4 className="font-medium mb-2">Benefícios</h4>
+              <ul className="space-y-2 text-sm">
+                <li className="flex items-start gap-2">
+                  <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mt-0.5">
+                    <div className="w-2.5 h-2.5 rounded-full bg-green-500"></div>
+                  </div>
+                  Aumento médio de 27% no CTR (Taxa de Cliques)
+                </li>
+                <li className="flex items-start gap-2">
+                  <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mt-0.5">
+                    <div className="w-2.5 h-2.5 rounded-full bg-green-500"></div>
+                  </div>
+                  Melhoria de 35% na taxa de conversão para infoprodutos
+                </li>
+                <li className="flex items-start gap-2">
+                  <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mt-0.5">
+                    <div className="w-2.5 h-2.5 rounded-full bg-green-500"></div>
+                  </div>
+                  Economia de tempo com edição automática por IA
+                </li>
+                <li className="flex items-start gap-2">
+                  <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mt-0.5">
+                    <div className="w-2.5 h-2.5 rounded-full bg-green-500"></div>
+                  </div>
+                  Histórico completo de análises para comparação de desempenho
+                </li>
+              </ul>
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button 
+              onClick={() => {
+                setHowItWorksOpen(false);
+                const element = document.getElementById('analisar');
+                if (element) {
+                  element.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
+              className="bg-brand-purple hover:bg-brand-purple/90"
+            >
+              Experimentar agora
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Recursos Dialog */}
+      <Dialog open={resourcesOpen} onOpenChange={setResourcesOpen}>
+        <DialogContent className="sm:max-w-[800px]">
+          <DialogHeader>
+            <DialogTitle className="text-2xl flex items-center gap-2">
+              <Layers className="text-brand-purple h-6 w-6" />
+              Recursos do CreatiBoost
+            </DialogTitle>
+            <DialogDescription>
+              Conheça todas as ferramentas disponíveis para otimizar seus criativos
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-6 py-4">
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="border rounded-lg overflow-hidden">
+                <div className="bg-brand-purple/10 p-4">
+                  <Book className="text-brand-purple h-10 w-10 mb-2" />
+                  <h3 className="text-lg font-medium">Análise de Criativos</h3>
+                </div>
+                <div className="p-4 space-y-2">
+                  <p className="text-sm text-gray-600">
+                    Avaliação completa de imagens e vídeos com pontuação de 0-100 e recomendações.
+                  </p>
+                  <ul className="text-xs space-y-1 text-gray-500">
+                    <li>• Análise de contraste e legibilidade</li>
+                    <li>• Verificação de elementos de CTA</li>
+                    <li>• Avaliação de proporção de texto/imagem</li>
+                  </ul>
+                </div>
+              </div>
+              
+              <div className="border rounded-lg overflow-hidden">
+                <div className="bg-brand-orange/10 p-4">
+                  <Layers className="text-brand-orange h-10 w-10 mb-2" />
+                  <h3 className="text-lg font-medium">Otimização por IA</h3>
+                </div>
+                <div className="p-4 space-y-2">
+                  <p className="text-sm text-gray-600">
+                    Melhoria automática de criativos com base nas recomendações da análise.
+                  </p>
+                  <ul className="text-xs space-y-1 text-gray-500">
+                    <li>• Ajuste automático de contrastes</li>
+                    <li>• Reposicionamento de elementos</li>
+                    <li>• Destaque de chamadas para ação</li>
+                  </ul>
+                </div>
+              </div>
+              
+              <div className="border rounded-lg overflow-hidden">
+                <div className="bg-green-50 p-4">
+                  <Download className="text-green-600 h-10 w-10 mb-2" />
+                  <h3 className="text-lg font-medium">Relatórios Detalhados</h3>
+                </div>
+                <div className="p-4 space-y-2">
+                  <p className="text-sm text-gray-600">
+                    Relatórios completos em PDF com todas as análises e comparativos.
+                  </p>
+                  <ul className="text-xs space-y-1 text-gray-500">
+                    <li>• Comparativo antes/depois</li>
+                    <li>• Métricas detalhadas por elemento</li>
+                    <li>• Sugestões de formatos para plataformas</li>
+                  </ul>
+                </div>
+              </div>
+              
+              <div className="border rounded-lg overflow-hidden">
+                <div className="bg-blue-50 p-4">
+                  <Layers className="text-blue-600 h-10 w-10 mb-2" />
+                  <h3 className="text-lg font-medium">Histórico e Comparações</h3>
+                </div>
+                <div className="p-4 space-y-2">
+                  <p className="text-sm text-gray-600">
+                    Acesso a todo histórico de análises e otimizações realizadas.
+                  </p>
+                  <ul className="text-xs space-y-1 text-gray-500">
+                    <li>• Biblioteca de criativos otimizados</li>
+                    <li>• Comparativo de desempenho entre versões</li>
+                    <li>• Organização por campanhas e projetos</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            
+            <div className="p-4 bg-gray-50 rounded-lg">
+              <h4 className="font-medium mb-2">Formatos Suportados</h4>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <h5 className="text-sm font-medium mb-1">Imagens:</h5>
+                  <p className="text-xs text-gray-600">JPG, PNG, WEBP, GIF (até 50MB)</p>
+                </div>
+                <div>
+                  <h5 className="text-sm font-medium mb-1">Vídeos:</h5>
+                  <p className="text-xs text-gray-600">MP4, MOV, WEBM (até 500MB)</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button 
+              onClick={() => {
+                setResourcesOpen(false);
+                const element = document.getElementById('precos');
+                if (element) {
+                  element.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
+              variant="outline"
+              className="mr-2"
+            >
+              Ver planos
+            </Button>
+            <Button 
+              onClick={() => {
+                setResourcesOpen(false);
+                const element = document.getElementById('analisar');
+                if (element) {
+                  element.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
+              className="bg-brand-purple hover:bg-brand-purple/90"
+            >
+              Começar agora
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </footer>
   );
 };

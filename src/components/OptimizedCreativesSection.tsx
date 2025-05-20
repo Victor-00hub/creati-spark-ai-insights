@@ -18,6 +18,7 @@ const OptimizedCreativesSection = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedCreative, setSelectedCreative] = useState<AnalysisHistory | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   useEffect(() => {
     const loadCreatives = async () => {
@@ -45,18 +46,41 @@ const OptimizedCreativesSection = () => {
   };
 
   const handleDownload = async (creative: AnalysisHistory) => {
+    setIsDownloading(true);
     toast({
       title: "Baixando criativo",
-      description: `Baixando ${creative.fileName}...`,
+      description: `Preparando o download de ${creative.fileName}...`,
     });
     
-    // Simulate download
-    setTimeout(() => {
+    try {
+      // Using our mock function to simulate the download
+      await downloadOptimizedCreative(creative);
+      
+      // Create a simulated download by creating a temporary anchor element
+      const link = document.createElement('a');
+      link.href = creative.optimizedVersion || '';
+      link.download = `optimized_${creative.fileName}`;
+      
+      // Append to the body, trigger click, and remove
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Show success toast
       toast({
         title: "Download concluído",
         description: `O criativo ${creative.fileName} foi baixado com sucesso.`,
       });
-    }, 1500);
+    } catch (error) {
+      console.error('Erro ao baixar criativo:', error);
+      toast({
+        title: "Erro ao baixar",
+        description: "Não foi possível baixar o criativo. Tente novamente mais tarde.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   const handlePreview = (creative: AnalysisHistory) => {
@@ -118,8 +142,8 @@ const OptimizedCreativesSection = () => {
                   <h3 className="font-medium truncate" title={creative.fileName}>
                     {creative.fileName}
                   </h3>
-                  <p className="text-xs text-gray-500">
-                    Otimizado em {formatDate(creative.date)}
+                  <p className="text-xs text-gray-500 flex items-center gap-1">
+                    <Calendar className="w-3 h-3" /> Otimizado em {formatDate(creative.date)}
                   </p>
                 </div>
                 
@@ -137,8 +161,17 @@ const OptimizedCreativesSection = () => {
                     size="sm"
                     className="flex-1"
                     onClick={() => handleDownload(creative)}
+                    disabled={isDownloading}
                   >
-                    <Download className="w-4 h-4 mr-2" /> Baixar
+                    {isDownloading ? (
+                      <>
+                        <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> Baixando
+                      </>
+                    ) : (
+                      <>
+                        <Download className="w-4 h-4 mr-2" /> Baixar
+                      </>
+                    )}
                   </Button>
                 </div>
               </CardContent>
@@ -206,8 +239,17 @@ const OptimizedCreativesSection = () => {
               <Button 
                 className="bg-brand-purple hover:bg-brand-purple/90"
                 onClick={() => handleDownload(selectedCreative)}
+                disabled={isDownloading}
               >
-                <Download className="w-4 h-4 mr-2" /> Baixar criativo
+                {isDownloading ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> Baixando...
+                  </>
+                ) : (
+                  <>
+                    <Download className="w-4 h-4 mr-2" /> Baixar criativo
+                  </>
+                )}
               </Button>
             </DialogFooter>
           </DialogContent>

@@ -1,341 +1,303 @@
 
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Brain, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogFooter 
-} from '@/components/ui/dialog';
-import { Book, Layers, Download, Info } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { toast } from '@/hooks/use-toast';
+import ModalInfo from '@/components/ui/modal-info';
 
 const Footer = () => {
-  const [howItWorksOpen, setHowItWorksOpen] = useState(false);
-  const [resourcesOpen, setResourcesOpen] = useState(false);
+  const [email, setEmail] = useState('');
+  const [isContactOpen, setIsContactOpen] = useState(false);
+  const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
+
+  const handleSubscribe = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!email) {
+      toast({
+        title: "E-mail obrigatório",
+        description: "Por favor, informe seu e-mail para se inscrever.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    // Reset form and show success message
+    setEmail('');
+    toast({
+      title: "Inscrição realizada!",
+      description: "Você foi inscrito para receber nossas novidades.",
+    });
+  };
 
   return (
-    <footer className="bg-gray-50 border-t">
-      <div className="container max-w-7xl mx-auto py-12 px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div className="md:col-span-1">
-            <div className="font-bold text-2xl bg-clip-text text-transparent bg-gradient-to-r from-brand-purple to-brand-blue mb-4">
-              CreatiBoost
+    <footer className="w-full bg-gray-900 text-white py-16 px-4">
+      <div className="container max-w-6xl mx-auto">
+        <div className="grid md:grid-cols-4 gap-8">
+          <div className="md:col-span-2">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="bg-brand-purple rounded-md p-1.5">
+                <Brain className="h-6 w-6 text-white" />
+              </div>
+              <span className="font-semibold text-xl">AdOptimizer</span>
             </div>
-            <p className="text-gray-600 text-sm">
-              Otimize seus criativos de infoprodutos e aumente conversões com análises de IA.
+            
+            <p className="text-gray-400 mb-6">
+              Potencialize seus anúncios com a inteligência artificial.
+              Análise e otimização automática para maximizar conversões e ROI.
             </p>
+            
+            <form onSubmit={handleSubscribe} className="flex gap-2">
+              <Input
+                type="email"
+                placeholder="Seu e-mail para novidades"
+                className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <Button type="submit" className="bg-brand-purple hover:bg-brand-purple/90">
+                Inscrever
+              </Button>
+            </form>
           </div>
           
           <div>
-            <h3 className="font-medium mb-4">Produto</h3>
-            <ul className="space-y-3 text-sm text-gray-600">
+            <h3 className="font-semibold text-lg mb-4">Links Rápidos</h3>
+            <ul className="space-y-3">
               <li>
-                <button 
-                  onClick={() => setHowItWorksOpen(true)} 
-                  className="hover:text-brand-purple"
-                >
-                  Como funciona
-                </button>
+                <Link to="/#analisar" className="text-gray-400 hover:text-white transition-colors">
+                  Analisar Criativo
+                </Link>
               </li>
               <li>
-                <button 
-                  onClick={() => setResourcesOpen(true)} 
-                  className="hover:text-brand-purple"
-                >
-                  Recursos
-                </button>
+                <Link to="/#precos" className="text-gray-400 hover:text-white transition-colors">
+                  Preços
+                </Link>
               </li>
-              <li><a href="#precos" className="hover:text-brand-purple">Preços</a></li>
-              <li><a href="#" className="hover:text-brand-purple">FAQ</a></li>
+              <li>
+                <Button 
+                  variant="link" 
+                  className="text-gray-400 hover:text-white p-0 h-auto" 
+                  onClick={() => setIsContactOpen(true)}
+                >
+                  Contato
+                </Button>
+              </li>
+              <li>
+                <Button 
+                  variant="link" 
+                  className="text-gray-400 hover:text-white p-0 h-auto"
+                  onClick={() => setIsPrivacyOpen(true)}
+                >
+                  Política de Privacidade
+                </Button>
+              </li>
             </ul>
           </div>
           
           <div>
-            <h3 className="font-medium mb-4">Empresa</h3>
-            <ul className="space-y-3 text-sm text-gray-600">
-              <li><a href="#" className="hover:text-brand-purple">Sobre nós</a></li>
-              <li><a href="#" className="hover:text-brand-purple">Blog</a></li>
-              <li><a href="#" className="hover:text-brand-purple">Contato</a></li>
-              <li><a href="#" className="hover:text-brand-purple">Parcerias</a></li>
-            </ul>
-          </div>
-          
-          <div>
-            <h3 className="font-medium mb-4">Legal</h3>
-            <ul className="space-y-3 text-sm text-gray-600">
-              <li><a href="#" className="hover:text-brand-purple">Termos de Serviço</a></li>
-              <li><a href="#" className="hover:text-brand-purple">Política de Privacidade</a></li>
-              <li><a href="#" className="hover:text-brand-purple">Cookies</a></li>
-            </ul>
+            <h3 className="font-semibold text-lg mb-4">Siga-nos</h3>
+            <div className="flex gap-4">
+              <a href="#" className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-brand-purple transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-facebook">
+                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+                </svg>
+              </a>
+              <a href="#" className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-brand-purple transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-twitter">
+                  <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" />
+                </svg>
+              </a>
+              <a href="#" className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-brand-purple transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-instagram">
+                  <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                  <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+                </svg>
+              </a>
+              <a href="#" className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-brand-purple transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-linkedin">
+                  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+                  <rect width="4" height="12" x="2" y="9" />
+                  <circle cx="4" cy="4" r="2" />
+                </svg>
+              </a>
+            </div>
           </div>
         </div>
         
-        <div className="border-t mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-sm text-gray-500 mb-4 md:mb-0">
-            © {new Date().getFullYear()} CreatiBoost. Todos os direitos reservados.
-          </p>
+        <div className="mt-12 pt-6 border-t border-gray-800 flex flex-col md:flex-row md:justify-between items-center gap-4">
+          <p className="text-sm text-gray-500">&copy; 2024 AdOptimizer. Todos os direitos reservados.</p>
           
-          <div className="flex space-x-6">
-            <a href="#" className="text-gray-400 hover:text-brand-purple">
-              <span className="sr-only">Facebook</span>
-              <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path fillRule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clipRule="evenodd" />
-              </svg>
-            </a>
-            <a href="#" className="text-gray-400 hover:text-brand-purple">
-              <span className="sr-only">Instagram</span>
-              <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path fillRule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clipRule="evenodd" />
-              </svg>
-            </a>
-            <a href="#" className="text-gray-400 hover:text-brand-purple">
-              <span className="sr-only">Twitter</span>
-              <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
-              </svg>
-            </a>
+          <div className="flex flex-wrap gap-4 justify-center">
+            <Button variant="link" className="text-sm text-gray-500 hover:text-white">
+              Termos de Serviço
+            </Button>
+            <Button 
+              variant="link" 
+              className="text-sm text-gray-500 hover:text-white"
+              onClick={() => setIsPrivacyOpen(true)}
+            >
+              Política de Privacidade
+            </Button>
+            <Button 
+              variant="link" 
+              className="text-sm text-gray-500 hover:text-white"
+              onClick={() => setIsContactOpen(true)}
+            >
+              Contato
+            </Button>
           </div>
         </div>
       </div>
 
-      {/* Como Funciona Dialog */}
-      <Dialog open={howItWorksOpen} onOpenChange={setHowItWorksOpen}>
-        <DialogContent className="sm:max-w-[800px]">
-          <DialogHeader>
-            <DialogTitle className="text-2xl flex items-center gap-2">
-              <Info className="text-brand-purple h-6 w-6" />
-              Como Funciona o CreatiBoost
-            </DialogTitle>
-            <DialogDescription>
-              Entenda o processo de análise e otimização de criativos
-            </DialogDescription>
-          </DialogHeader>
+      {/* Modal de Contato */}
+      <ModalInfo
+        isOpen={isContactOpen}
+        onClose={() => setIsContactOpen(false)}
+        title="Entre em Contato"
+      >
+        <div className="py-4 space-y-6">
+          <p className="text-gray-600">
+            Estamos à disposição para ajudar você a otimizar seus anúncios e impulsionar seus resultados.
+            Entre em contato pelos canais abaixo:
+          </p>
           
-          <div className="space-y-6 py-4">
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="flex flex-col gap-3 p-4 border rounded-lg">
-                <div className="w-12 h-12 rounded-full bg-brand-purple/10 flex items-center justify-center text-brand-purple mb-2">
-                  <span className="text-xl font-bold">1</span>
-                </div>
-                <h3 className="text-lg font-medium">Faça upload do seu criativo</h3>
-                <p className="text-gray-600 text-sm">
-                  Envie suas imagens ou vídeos diretamente na plataforma. Suportamos 
-                  formatos JPG, PNG, MP4 e MOV com até 50MB.
-                </p>
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="bg-brand-purple/10 p-2 rounded-full">
+                <Mail className="h-5 w-5 text-brand-purple" />
               </div>
-              
-              <div className="flex flex-col gap-3 p-4 border rounded-lg">
-                <div className="w-12 h-12 rounded-full bg-brand-purple/10 flex items-center justify-center text-brand-purple mb-2">
-                  <span className="text-xl font-bold">2</span>
-                </div>
-                <h3 className="text-lg font-medium">IA analisa seu criativo</h3>
-                <p className="text-gray-600 text-sm">
-                  Nossa IA avalia mais de 50 elementos do seu criativo, incluindo cores, 
-                  contraste, chamadas para ação, texto e elementos visuais.
-                </p>
-              </div>
-              
-              <div className="flex flex-col gap-3 p-4 border rounded-lg">
-                <div className="w-12 h-12 rounded-full bg-brand-purple/10 flex items-center justify-center text-brand-purple mb-2">
-                  <span className="text-xl font-bold">3</span>
-                </div>
-                <h3 className="text-lg font-medium">Receba recomendações</h3>
-                <p className="text-gray-600 text-sm">
-                  Visualize pontos fortes e fracos do seu criativo, com sugestões 
-                  específicas para melhorar seu desempenho e taxa de conversão.
-                </p>
-              </div>
-              
-              <div className="flex flex-col gap-3 p-4 border rounded-lg">
-                <div className="w-12 h-12 rounded-full bg-brand-purple/10 flex items-center justify-center text-brand-purple mb-2">
-                  <span className="text-xl font-bold">4</span>
-                </div>
-                <h3 className="text-lg font-medium">Optimize com IA</h3>
-                <p className="text-gray-600 text-sm">
-                  Com um clique, nossa IA aplica as melhorias recomendadas ao seu criativo, 
-                  gerando uma nova versão otimizada pronta para uso.
-                </p>
+              <div>
+                <h4 className="font-medium">E-mail</h4>
+                <p className="text-gray-600">contato@adoptimizer.com.br</p>
               </div>
             </div>
             
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <h4 className="font-medium mb-2">Benefícios</h4>
-              <ul className="space-y-2 text-sm">
-                <li className="flex items-start gap-2">
-                  <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mt-0.5">
-                    <div className="w-2.5 h-2.5 rounded-full bg-green-500"></div>
-                  </div>
-                  Aumento médio de 27% no CTR (Taxa de Cliques)
-                </li>
-                <li className="flex items-start gap-2">
-                  <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mt-0.5">
-                    <div className="w-2.5 h-2.5 rounded-full bg-green-500"></div>
-                  </div>
-                  Melhoria de 35% na taxa de conversão para infoprodutos
-                </li>
-                <li className="flex items-start gap-2">
-                  <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mt-0.5">
-                    <div className="w-2.5 h-2.5 rounded-full bg-green-500"></div>
-                  </div>
-                  Economia de tempo com edição automática por IA
-                </li>
-                <li className="flex items-start gap-2">
-                  <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mt-0.5">
-                    <div className="w-2.5 h-2.5 rounded-full bg-green-500"></div>
-                  </div>
-                  Histórico completo de análises para comparação de desempenho
-                </li>
-              </ul>
-            </div>
-          </div>
-          
-          <DialogFooter>
-            <Button 
-              onClick={() => {
-                setHowItWorksOpen(false);
-                const element = document.getElementById('analisar');
-                if (element) {
-                  element.scrollIntoView({ behavior: 'smooth' });
-                }
-              }}
-              className="bg-brand-purple hover:bg-brand-purple/90"
-            >
-              Experimentar agora
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Recursos Dialog */}
-      <Dialog open={resourcesOpen} onOpenChange={setResourcesOpen}>
-        <DialogContent className="sm:max-w-[800px]">
-          <DialogHeader>
-            <DialogTitle className="text-2xl flex items-center gap-2">
-              <Layers className="text-brand-purple h-6 w-6" />
-              Recursos do CreatiBoost
-            </DialogTitle>
-            <DialogDescription>
-              Conheça todas as ferramentas disponíveis para otimizar seus criativos
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="space-y-6 py-4">
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="border rounded-lg overflow-hidden">
-                <div className="bg-brand-purple/10 p-4">
-                  <Book className="text-brand-purple h-10 w-10 mb-2" />
-                  <h3 className="text-lg font-medium">Análise de Criativos</h3>
-                </div>
-                <div className="p-4 space-y-2">
-                  <p className="text-sm text-gray-600">
-                    Avaliação completa de imagens e vídeos com pontuação de 0-100 e recomendações.
-                  </p>
-                  <ul className="text-xs space-y-1 text-gray-500">
-                    <li>• Análise de contraste e legibilidade</li>
-                    <li>• Verificação de elementos de CTA</li>
-                    <li>• Avaliação de proporção de texto/imagem</li>
-                  </ul>
-                </div>
+            <div className="flex items-center gap-3">
+              <div className="bg-brand-purple/10 p-2 rounded-full">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-brand-purple">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                </svg>
               </div>
-              
-              <div className="border rounded-lg overflow-hidden">
-                <div className="bg-brand-orange/10 p-4">
-                  <Layers className="text-brand-orange h-10 w-10 mb-2" />
-                  <h3 className="text-lg font-medium">Otimização por IA</h3>
-                </div>
-                <div className="p-4 space-y-2">
-                  <p className="text-sm text-gray-600">
-                    Melhoria automática de criativos com base nas recomendações da análise.
-                  </p>
-                  <ul className="text-xs space-y-1 text-gray-500">
-                    <li>• Ajuste automático de contrastes</li>
-                    <li>• Reposicionamento de elementos</li>
-                    <li>• Destaque de chamadas para ação</li>
-                  </ul>
-                </div>
-              </div>
-              
-              <div className="border rounded-lg overflow-hidden">
-                <div className="bg-green-50 p-4">
-                  <Download className="text-green-600 h-10 w-10 mb-2" />
-                  <h3 className="text-lg font-medium">Relatórios Detalhados</h3>
-                </div>
-                <div className="p-4 space-y-2">
-                  <p className="text-sm text-gray-600">
-                    Relatórios completos em PDF com todas as análises e comparativos.
-                  </p>
-                  <ul className="text-xs space-y-1 text-gray-500">
-                    <li>• Comparativo antes/depois</li>
-                    <li>• Métricas detalhadas por elemento</li>
-                    <li>• Sugestões de formatos para plataformas</li>
-                  </ul>
-                </div>
-              </div>
-              
-              <div className="border rounded-lg overflow-hidden">
-                <div className="bg-blue-50 p-4">
-                  <Layers className="text-blue-600 h-10 w-10 mb-2" />
-                  <h3 className="text-lg font-medium">Histórico e Comparações</h3>
-                </div>
-                <div className="p-4 space-y-2">
-                  <p className="text-sm text-gray-600">
-                    Acesso a todo histórico de análises e otimizações realizadas.
-                  </p>
-                  <ul className="text-xs space-y-1 text-gray-500">
-                    <li>• Biblioteca de criativos otimizados</li>
-                    <li>• Comparativo de desempenho entre versões</li>
-                    <li>• Organização por campanhas e projetos</li>
-                  </ul>
-                </div>
+              <div>
+                <h4 className="font-medium">Telefone</h4>
+                <p className="text-gray-600">(11) 5555-5555</p>
               </div>
             </div>
             
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <h4 className="font-medium mb-2">Formatos Suportados</h4>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <h5 className="text-sm font-medium mb-1">Imagens:</h5>
-                  <p className="text-xs text-gray-600">JPG, PNG, WEBP, GIF (até 50MB)</p>
-                </div>
-                <div>
-                  <h5 className="text-sm font-medium mb-1">Vídeos:</h5>
-                  <p className="text-xs text-gray-600">MP4, MOV, WEBM (até 500MB)</p>
-                </div>
+            <div className="flex items-center gap-3">
+              <div className="bg-brand-purple/10 p-2 rounded-full">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-brand-purple">
+                  <path d="M12 2a8 8 0 0 0-8 8c0 1.892.402 3.13 1.5 4.5L12 22l6.5-7.5c1.098-1.37 1.5-2.608 1.5-4.5a8 8 0 0 0-8-8z" />
+                  <circle cx="12" cy="10" r="3" />
+                </svg>
+              </div>
+              <div>
+                <h4 className="font-medium">Endereço</h4>
+                <p className="text-gray-600">Av. Paulista, 1000, São Paulo - SP</p>
               </div>
             </div>
           </div>
           
-          <DialogFooter>
-            <Button 
-              onClick={() => {
-                setResourcesOpen(false);
-                const element = document.getElementById('precos');
-                if (element) {
-                  element.scrollIntoView({ behavior: 'smooth' });
-                }
-              }}
-              variant="outline"
-              className="mr-2"
-            >
-              Ver planos
-            </Button>
-            <Button 
-              onClick={() => {
-                setResourcesOpen(false);
-                const element = document.getElementById('analisar');
-                if (element) {
-                  element.scrollIntoView({ behavior: 'smooth' });
-                }
-              }}
-              className="bg-brand-purple hover:bg-brand-purple/90"
-            >
-              Começar agora
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          <div className="pt-4 border-t">
+            <h4 className="font-medium mb-3">Horário de atendimento</h4>
+            <p className="text-gray-600">
+              Segunda a sexta: 9h às 18h<br />
+              Sábado: 9h às 13h
+            </p>
+          </div>
+        </div>
+      </ModalInfo>
+      
+      {/* Modal de Política de Privacidade */}
+      <ModalInfo
+        isOpen={isPrivacyOpen}
+        onClose={() => setIsPrivacyOpen(false)}
+        title="Política de Privacidade"
+      >
+        <div className="py-4 space-y-4 max-h-[500px] overflow-y-auto text-sm">
+          <p>
+            A sua privacidade é importante para nós. Esta Política de Privacidade descreve como coletamos, 
+            usamos, processamos e protegemos suas informações quando você utiliza nossos serviços.
+          </p>
+          
+          <h3 className="font-medium text-base">1. Informações que coletamos</h3>
+          <p>
+            Coletamos informações que você nos fornece diretamente, como nome, endereço de e-mail, 
+            informações de conta e qualquer outra informação que você opte por fornecer.
+          </p>
+          <p>
+            Também coletamos informações automaticamente quando você usa nossos serviços, incluindo:
+          </p>
+          <ul className="list-disc pl-5 space-y-1">
+            <li>Informações sobre o dispositivo e navegador que você usa</li>
+            <li>Endereço IP e informações de localização aproximada</li>
+            <li>Informações sobre como você usa nossos serviços</li>
+            <li>Outras informações coletadas por cookies e tecnologias similares</li>
+          </ul>
+          
+          <h3 className="font-medium text-base">2. Como usamos suas informações</h3>
+          <p>
+            Usamos suas informações para:
+          </p>
+          <ul className="list-disc pl-5 space-y-1">
+            <li>Fornecer, manter e melhorar nossos serviços</li>
+            <li>Processar e concluir transações</li>
+            <li>Enviar informações técnicas, atualizações e mensagens administrativas</li>
+            <li>Responder aos seus comentários e perguntas</li>
+            <li>Comunicar-se com você sobre produtos, serviços, ofertas e eventos</li>
+            <li>Monitorar e analisar tendências, uso e atividades</li>
+            <li>Prevenir atividades fraudulentas, uso indevido e outras atividades proibidas</li>
+          </ul>
+          
+          <h3 className="font-medium text-base">3. Compartilhamento de informações</h3>
+          <p>
+            Podemos compartilhar suas informações com:
+          </p>
+          <ul className="list-disc pl-5 space-y-1">
+            <li>Fornecedores de serviços que prestam serviços em nosso nome</li>
+            <li>Parceiros de negócios com os quais oferecemos produtos ou serviços em conjunto</li>
+            <li>Quando exigido por lei ou para proteger direitos e segurança</li>
+          </ul>
+          
+          <h3 className="font-medium text-base">4. Seus direitos e escolhas</h3>
+          <p>
+            Você tem direitos relacionados às suas informações pessoais, incluindo:
+          </p>
+          <ul className="list-disc pl-5 space-y-1">
+            <li>Acessar e corrigir suas informações pessoais</li>
+            <li>Excluir suas informações pessoais</li>
+            <li>Restringir ou opor-se ao processamento de suas informações</li>
+            <li>Receber suas informações em formato portátil</li>
+            <li>Optar por não receber e-mails promocionais</li>
+          </ul>
+          
+          <h3 className="font-medium text-base">5. Segurança</h3>
+          <p>
+            Implementamos medidas de segurança para proteger suas informações contra acesso,
+            alteração, divulgação ou destruição não autorizada.
+          </p>
+          
+          <h3 className="font-medium text-base">6. Alterações nesta política</h3>
+          <p>
+            Podemos atualizar esta Política de Privacidade periodicamente. Notificaremos você 
+            sobre quaisquer alterações publicando a nova Política de Privacidade nesta página.
+          </p>
+          
+          <h3 className="font-medium text-base">7. Contato</h3>
+          <p>
+            Se você tiver alguma dúvida sobre esta Política de Privacidade, entre em contato conosco:
+            contato@adoptimizer.com.br
+          </p>
+          
+          <p className="pt-4 text-xs text-gray-500">
+            Última atualização: 21 de Maio de 2024
+          </p>
+        </div>
+      </ModalInfo>
     </footer>
   );
 };

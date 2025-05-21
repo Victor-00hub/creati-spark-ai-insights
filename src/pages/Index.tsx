@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import Hero from '@/components/Hero';
@@ -8,13 +9,21 @@ import HistorySection from '@/components/HistorySection';
 import OptimizedCreativesSection from '@/components/OptimizedCreativesSection';
 import { Button } from '@/components/ui/button';
 import { analyzeMockCreative, getMockHistoryItems, AnalysisResult } from '@/lib/mockAnalysis';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/hooks/use-toast';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Input } from '@/components/ui/input';
 
 const Index = () => {
   const [file, setFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
   const historyItems = getMockHistoryItems();
+  const [isPricingDialogOpen, setIsPricingDialogOpen] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<'free' | 'premium' | 'business'>('free');
   
   const handleFileSelected = (selectedFile: File) => {
     setFile(selectedFile);
@@ -55,6 +64,48 @@ const Index = () => {
   const handleNewAnalysis = () => {
     setFile(null);
     setAnalysisResult(null);
+  };
+
+  const openPricingDialog = (plan: 'free' | 'premium' | 'business') => {
+    setSelectedPlan(plan);
+    setIsPricingDialogOpen(true);
+  };
+
+  // Form schema for the pricing form
+  const pricingFormSchema = z.object({
+    name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
+    email: z.string().email("Email inválido"),
+    company: z.string().optional(),
+  });
+
+  const pricingForm = useForm<z.infer<typeof pricingFormSchema>>({
+    resolver: zodResolver(pricingFormSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      company: "",
+    },
+  });
+
+  const onPricingSubmit = (data: z.infer<typeof pricingFormSchema>) => {
+    console.log("Form data:", data, "Selected plan:", selectedPlan);
+
+    let toastMessage = "";
+    
+    if (selectedPlan === "free") {
+      toastMessage = "Você se inscreveu no plano gratuito! Você pode utilizar até 3 análises por mês.";
+    } else if (selectedPlan === "premium") {
+      toastMessage = "Você se inscreveu no plano Premium! Você terá acesso à todas as ferramentas premium.";
+    } else {
+      toastMessage = "Obrigado pelo seu interesse! Nossa equipe de vendas entrará em contato em breve.";
+    }
+
+    toast({
+      title: "Inscrição realizada com sucesso!",
+      description: toastMessage,
+    });
+
+    setIsPricingDialogOpen(false);
   };
   
   return (
@@ -141,7 +192,7 @@ const Index = () => {
                   </li>
                 </ul>
                 
-                <Button variant="outline" className="w-full">
+                <Button variant="outline" className="w-full" onClick={() => openPricingDialog('free')}>
                   Começar Grátis
                 </Button>
               </div>
@@ -183,7 +234,7 @@ const Index = () => {
                   </li>
                 </ul>
                 
-                <Button className="w-full bg-brand-purple hover:bg-brand-purple/90">
+                <Button className="w-full bg-brand-purple hover:bg-brand-purple/90" onClick={() => openPricingDialog('premium')}>
                   Assinar Agora
                 </Button>
               </div>
@@ -221,7 +272,7 @@ const Index = () => {
                   </li>
                 </ul>
                 
-                <Button variant="outline" className="w-full">
+                <Button variant="outline" className="w-full" onClick={() => openPricingDialog('business')}>
                   Falar com Vendas
                 </Button>
               </div>
@@ -229,6 +280,84 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Pricing Dialog */}
+      <Dialog open={isPricingDialogOpen} onOpenChange={setIsPricingDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>
+              {selectedPlan === 'free' 
+                ? 'Começar com o plano gratuito' 
+                : selectedPlan === 'premium'
+                ? 'Assinar o plano Premium'
+                : 'Falar com nossa equipe de vendas'}
+            </DialogTitle>
+            <DialogDescription>
+              {selectedPlan === 'free' 
+                ? 'Preencha seus dados para começar a usar o AdOptimizer gratuitamente.' 
+                : selectedPlan === 'premium'
+                ? 'Preencha seus dados para assinar o plano Premium e ter acesso a todas as funcionalidades.'
+                : 'Nossa equipe de vendas entrará em contato para discutir sua necessidade.'}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <Form {...pricingForm}>
+            <form onSubmit={pricingForm.handleSubmit(onPricingSubmit)} className="space-y-4 py-4">
+              <FormField
+                control={pricingForm.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nome completo</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Seu nome" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={pricingForm.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input placeholder="seu@email.com" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={pricingForm.control}
+                name="company"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Empresa (opcional)</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Sua empresa" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <DialogFooter className="pt-4">
+                <Button type="submit" className={selectedPlan === 'premium' ? "bg-brand-purple hover:bg-brand-purple/90" : ""}>
+                  {selectedPlan === 'free' 
+                    ? 'Ativar plano gratuito' 
+                    : selectedPlan === 'premium'
+                    ? 'Assinar plano Premium'
+                    : 'Solicitar contato'}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
       
       <Footer />
     </div>

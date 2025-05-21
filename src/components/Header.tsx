@@ -2,12 +2,78 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { Brain, Check, ChevronDown, Lightbulb, Sparkles, TrendingUp, BarChart } from 'lucide-react';
+import { Brain, Check, ChevronDown, Lightbulb, Sparkles, TrendingUp, BarChart, LogIn } from 'lucide-react';
 import ModalInfo from '@/components/ui/modal-info';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
+import { toast } from '@/hooks/use-toast';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+// Form schemas
+const loginSchema = z.object({
+  email: z.string().email({ message: "Email inválido" }),
+  password: z.string().min(6, { message: "A senha deve ter pelo menos 6 caracteres" }),
+});
+
+const registerSchema = z.object({
+  name: z.string().min(2, { message: "Nome deve ter pelo menos 2 caracteres" }),
+  email: z.string().email({ message: "Email inválido" }),
+  password: z.string().min(6, { message: "A senha deve ter pelo menos 6 caracteres" }),
+});
 
 const Header = () => {
   const [isHowItWorksOpen, setIsHowItWorksOpen] = useState(false);
   const [isResourcesOpen, setIsResourcesOpen] = useState(false);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [isRegisterOpen, setIsRegisterOpen] = useState(false);
+
+  // Login form
+  const loginForm = useForm<z.infer<typeof loginSchema>>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  // Register form
+  const registerForm = useForm<z.infer<typeof registerSchema>>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+    },
+  });
+
+  const onLoginSubmit = (data: z.infer<typeof loginSchema>) => {
+    // Here you would typically connect to an authentication service
+    console.log("Login data:", data);
+    
+    // Simulate login process
+    toast({
+      title: "Login realizado com sucesso!",
+      description: "Bem-vindo de volta ao AdOptimizer.",
+    });
+    
+    setIsLoginOpen(false);
+  };
+
+  const onRegisterSubmit = (data: z.infer<typeof registerSchema>) => {
+    // Here you would typically register a new user
+    console.log("Register data:", data);
+    
+    // Simulate registration process
+    toast({
+      title: "Cadastro realizado com sucesso!",
+      description: "Bem-vindo ao AdOptimizer. Seu período gratuito começou!",
+    });
+    
+    setIsRegisterOpen(false);
+  };
 
   return (
     <header className="w-full border-b bg-white">
@@ -44,10 +110,146 @@ const Header = () => {
         </nav>
 
         <div className="flex items-center gap-4">
-          <Button variant="outline">Entrar</Button>
-          <Button className="bg-brand-purple hover:bg-brand-purple/90">
-            Começar Grátis
-          </Button>
+          <Dialog open={isLoginOpen} onOpenChange={setIsLoginOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <LogIn className="mr-2 h-4 w-4" />
+                Entrar
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Entrar na sua conta</DialogTitle>
+                <DialogDescription>
+                  Digite suas credenciais para acessar sua conta AdOptimizer.
+                </DialogDescription>
+              </DialogHeader>
+              
+              <Form {...loginForm}>
+                <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4 py-4">
+                  <FormField
+                    control={loginForm.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Input placeholder="seu@email.com" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={loginForm.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Senha</FormLabel>
+                        <FormControl>
+                          <Input type="password" placeholder="••••••" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <div className="flex justify-between items-center mt-6">
+                    <Button 
+                      type="button" 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => {
+                        setIsLoginOpen(false);
+                        setIsRegisterOpen(true);
+                      }}
+                    >
+                      Não tem conta? Cadastre-se
+                    </Button>
+                    <Button type="submit">Entrar</Button>
+                  </div>
+                </form>
+              </Form>
+            </DialogContent>
+          </Dialog>
+          
+          <Dialog open={isRegisterOpen} onOpenChange={setIsRegisterOpen}>
+            <DialogTrigger asChild>
+              <Button className="bg-brand-purple hover:bg-brand-purple/90">
+                Começar Grátis
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Crie sua conta grátis</DialogTitle>
+                <DialogDescription>
+                  Cadastre-se para acessar o AdOptimizer e começar a otimizar seus anúncios.
+                </DialogDescription>
+              </DialogHeader>
+              
+              <Form {...registerForm}>
+                <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-4 py-4">
+                  <FormField
+                    control={registerForm.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Nome completo</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Seu nome" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={registerForm.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Input placeholder="seu@email.com" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={registerForm.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Senha</FormLabel>
+                        <FormControl>
+                          <Input type="password" placeholder="••••••" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <div className="flex justify-between items-center mt-6">
+                    <Button 
+                      type="button" 
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setIsRegisterOpen(false);
+                        setIsLoginOpen(true);
+                      }}
+                    >
+                      Já tem conta? Entre
+                    </Button>
+                    <Button type="submit" className="bg-brand-purple hover:bg-brand-purple/90">Criar conta</Button>
+                  </div>
+                </form>
+              </Form>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
 

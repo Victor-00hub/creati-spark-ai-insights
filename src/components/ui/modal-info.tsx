@@ -22,9 +22,9 @@ const ModalInfo = ({ isOpen, onClose, title, children }: ModalInfoProps) => {
         {children}
         
         <DialogFooter>
-          <Button onClick={onClose}>
+          <Button onClick={onClose} className="bg-brand-purple hover:bg-brand-purple/90">
             <Check className="mr-2 h-4 w-4" />
-            Entendi
+            Fechar
           </Button>
         </DialogFooter>
       </DialogContent>

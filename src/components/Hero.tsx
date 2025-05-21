@@ -64,19 +64,27 @@ const Hero = () => {
           </div>
           <div className="mt-6 flex items-center gap-3">
             <div className="flex -space-x-3">
-              {[1, 2, 3].map((i) => (
-                <div 
-                  key={i}
-                  className="w-10 h-10 rounded-full border-2 border-white bg-gray-300 overflow-hidden"
-                >
-                  <img
-                    src={`https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&fit=crop&q=60&bg=white&crop=entropy&auto=format`}
-                    alt={`User ${i}`}
-                    className="w-full h-full object-cover"
-                    style={{filter: `brightness(${0.7 + (i * 0.1)})`, transform: `scale(${0.8 + (i * 0.1)})`}}
-                  />
-                </div>
-              ))}
+              <div className="w-10 h-10 rounded-full border-2 border-white bg-gray-300 overflow-hidden">
+                <img
+                  src="https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=100&fit=crop&q=60&bg=white&crop=entropy&auto=format"
+                  alt="Marketing professional 1"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="w-10 h-10 rounded-full border-2 border-white bg-gray-300 overflow-hidden">
+                <img
+                  src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&fit=crop&q=60&bg=white&crop=entropy&auto=format"
+                  alt="Marketing professional 2"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="w-10 h-10 rounded-full border-2 border-white bg-gray-300 overflow-hidden">
+                <img
+                  src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100&fit=crop&q=60&bg=white&crop=entropy&auto=format"
+                  alt="Marketing professional 3"
+                  className="w-full h-full object-cover"
+                />
+              </div>
             </div>
             <p className="text-sm opacity-90">
               +2.500 profissionais de marketing já utilizam

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { AnalysisResult, improveCreativeWithAI, downloadReportAsPDF, getOptimizedCreative, downloadOptimizedCreative } from '@/lib/mockAnalysis';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { ArrowRight, Check, X, AlertCircle, Download, Wand2, RefreshCw, Upload, Eye } from 'lucide-react';
+import { ArrowRight, Check, X, AlertCircle, Download, Wand2, RefreshCw, Upload, Eye, FileText, Printer, Mail } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { toast } from '@/hooks/use-toast';
@@ -12,6 +12,7 @@ import {
   Dialog, DialogContent, DialogDescription, DialogHeader, 
   DialogTitle, DialogFooter 
 } from '@/components/ui/dialog';
+import ModalInfo from './ui/modal-info';
 
 interface AnalysisResultsProps {
   result: AnalysisResult;
@@ -24,6 +25,7 @@ const AnalysisResults = ({ result: initialResult, onNewAnalysis }: AnalysisResul
   const [isDownloading, setIsDownloading] = useState(false);
   const [isViewingOptimized, setIsViewingOptimized] = useState(false);
   const [isLoadingOptimized, setIsLoadingOptimized] = useState(false);
+  const [isReportOptionsOpen, setIsReportOptionsOpen] = useState(false);
   
   // Determine score color
   const getScoreColor = (score: number) => {
@@ -67,18 +69,41 @@ const AnalysisResults = ({ result: initialResult, onNewAnalysis }: AnalysisResul
   
   // Handle report download
   const handleDownload = async () => {
+    setIsReportOptionsOpen(true);
+  };
+
+  const handleReportDownload = async (format: 'pdf' | 'print' | 'email') => {
+    setIsReportOptionsOpen(false);
     setIsDownloading(true);
+
+    let actionText = "Preparando relatório";
+    let successMessage = "Seu relatório de análise foi baixado com sucesso.";
+
+    if (format === 'print') {
+      actionText = "Preparando para impressão";
+      successMessage = "Seu relatório de análise foi enviado para impressão.";
+    } else if (format === 'email') {
+      actionText = "Preparando para envio por email";
+      successMessage = "Seu relatório de análise foi enviado para seu email.";
+    }
+    
     toast({
-      title: "Preparando relatório",
-      description: "Gerando PDF com análise detalhada...",
+      title: actionText,
+      description: "Gerando relatório detalhado...",
     });
     
     try {
       await downloadReportAsPDF(result);
       toast({
         title: "Download concluído!",
-        description: "Seu relatório de análise foi baixado com sucesso.",
+        description: successMessage,
       });
+
+      if (format === 'print') {
+        setTimeout(() => {
+          window.print();
+        }, 1000);
+      }
     } catch (error) {
       toast({
         title: "Erro no download",
@@ -232,7 +257,7 @@ const AnalysisResults = ({ result: initialResult, onNewAnalysis }: AnalysisResul
                 ) : (
                   <>
                     <Download className="mr-2 h-4 w-4" />
-                    Baixar relatório PDF
+                    Baixar relatório
                   </>
                 )}
               </Button>
@@ -539,6 +564,61 @@ const AnalysisResults = ({ result: initialResult, onNewAnalysis }: AnalysisResul
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Report Options Modal */}
+      <ModalInfo 
+        isOpen={isReportOptionsOpen} 
+        onClose={() => setIsReportOptionsOpen(false)}
+        title="Baixar Relatório"
+        description="Escolha como você deseja obter seu relatório de análise"
+      >
+        <div className="py-6 space-y-4">
+          <Button 
+            variant="outline" 
+            className="w-full flex justify-between items-center p-6 hover:bg-gray-50"
+            onClick={() => handleReportDownload('pdf')}
+          >
+            <div className="flex items-center">
+              <FileText className="w-8 h-8 text-brand-purple mr-4" />
+              <div className="text-left">
+                <p className="font-medium">Baixar PDF</p>
+                <p className="text-sm text-gray-500">Relatório completo em formato PDF para salvar</p>
+              </div>
+            </div>
+            <Download className="w-5 h-5 text-gray-400" />
+          </Button>
+          
+          <Button 
+            variant="outline" 
+            className="w-full flex justify-between items-center p-6 hover:bg-gray-50"
+            onClick={() => handleReportDownload('print')}
+          >
+            <div className="flex items-center">
+              <Printer className="w-8 h-8 text-brand-purple mr-4" />
+              <div className="text-left">
+                <p className="font-medium">Imprimir Relatório</p>
+                <p className="text-sm text-gray-500">Enviar para impressora conectada</p>
+              </div>
+            </div>
+            <Download className="w-5 h-5 text-gray-400" />
+          </Button>
+
+          <Button 
+            variant="outline" 
+            className="w-full flex justify-between items-center p-6 hover:bg-gray-50"
+            onClick={() => handleReportDownload('email')}
+          >
+            <div className="flex items-center">
+              <Mail className="w-8 h-8 text-brand-purple mr-4" />
+              <div className="text-left">
+                <p className="font-medium">Enviar por Email</p>
+                <p className="text-sm text-gray-500">Receba o relatório no seu email cadastrado</p>
+              </div>
+            </div>
+            <Download className="w-5 h-5 text-gray-400" />
+          </Button>
+        </div>
+      </ModalInfo>
     </div>
   );
 };
